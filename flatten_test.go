@@ -2,6 +2,7 @@ package flatten
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -158,4 +159,27 @@ func TestFlattenArray(t *testing.T) {
 	flat, err := FlattenToInterface(nested, "", UppercaseStyle)
 	assert.NoError(t, err)
 	assert.NotNil(t, flat)
+}
+
+func TestFlattenArrayOfStruct(t *testing.T) {
+	nested := map[string]interface{}{
+		"keyOne": "b",
+		"keyTwo": []map[string]interface{}{
+			{
+				"k1": "v1",
+				"k2": "v2",
+			},
+			{
+				"k3": "v3",
+				"k4": "v4",
+			},
+		},
+		"keyThree": 1.4567,
+	}
+
+	flat, err := FlattenToInterface(nested, "", UppercaseStyle)
+	assert.NoError(t, err)
+	assert.NotNil(t, flat)
+
+	fmt.Println(flat)
 }
