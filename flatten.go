@@ -47,6 +47,7 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
+	"strings"
 )
 
 // The presentation style of keys.
@@ -60,6 +61,9 @@ const (
 
 	// Separate ala Rails, e.g. "a[b][c][1][d]"
 	RailsStyle
+
+	// Separate by gic uppercase at first character, e.g. "A"
+	UppercaseStyle
 )
 
 // Nested input must be a map or slice
@@ -100,6 +104,25 @@ func FlattenString(nestedstr, prefix string, style SeparatorStyle) (string, erro
 	}
 
 	return string(flatb), nil
+}
+
+// FlattenToInterface generates a flat interface that processed from nested input.
+func FlattenToInterface(nested map[string]interface{}, prefix string, style SeparatorStyle) (map[string]interface{}, error) {
+	str, err := json.Marshal(nested)
+	if err != nil {
+		return nil, err
+	}
+
+	flat, err := FlattenString(string(str), "", UppercaseStyle)
+	if err != nil {
+		return nil, err
+	}
+
+	data := make(map[string]interface{})
+
+	json.Unmarshal([]byte(flat), &data)
+
+	return data, nil
 }
 
 func flatten(top bool, flatMap map[string]interface{}, nested interface{}, prefix string, style SeparatorStyle) error {
@@ -145,6 +168,8 @@ func enkey(top bool, prefix, subkey string, style SeparatorStyle) string {
 			key += "." + subkey
 		case RailsStyle:
 			key += "[" + subkey + "]"
+		case UppercaseStyle:
+			key += strings.Title(subkey)
 		}
 	}
 

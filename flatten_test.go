@@ -2,10 +2,13 @@ package flatten
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"strings"
 	"testing"
 	"unicode"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFlatten(t *testing.T) {
@@ -144,4 +147,18 @@ func TestFlattenString(t *testing.T) {
 			t.Errorf("%d: mismatch, got: %v want: %v", i+1, got, test.want)
 		}
 	}
+}
+
+func TestFlattenArray(t *testing.T) {
+	nested := map[string]interface{}{
+		"keyOne":   "b",
+		"keyTwo":   []string{"e1", "e2", "e3"},
+		"keyThree": 1.4567,
+	}
+
+	flat, err := FlattenToInterface(nested, "", UppercaseStyle)
+	assert.NoError(t, err)
+	assert.NotNil(t, flat)
+
+	fmt.Println(flat)
 }
