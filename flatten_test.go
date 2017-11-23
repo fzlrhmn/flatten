@@ -2,7 +2,6 @@ package flatten
 
 import (
 	"encoding/json"
-	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -159,6 +158,4 @@ func TestFlattenArray(t *testing.T) {
 	flat, err := FlattenToInterface(nested, "", UppercaseStyle)
 	assert.NoError(t, err)
 	assert.NotNil(t, flat)
-
-	fmt.Println(flat)
 }
